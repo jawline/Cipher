@@ -3,7 +3,7 @@ fn next_idx(last_idx: usize, key: &[u8]) -> usize {
 	if new_idx >= key.len() { 0 } else { new_idx }
 }
 
-pub fn encrypt(message: &[u8], key: &[u8]) -> Vec<u8> {
+pub fn encrypt(message: &[u8], key: &[u8], cipher: &Fn(u8, &[u8], usize) -> u8) -> Vec<u8> {
 
 	let mut previous_block: u8 = 0;
 	let mut last_idx = 0;
@@ -11,9 +11,7 @@ pub fn encrypt(message: &[u8], key: &[u8]) -> Vec<u8> {
 	message.iter().map(|&x| {
 		let mut current_block = x ^ previous_block;
 
-		//DO ENCRYPT
-		current_block = current_block ^ key[last_idx];
-
+		current_block = cipher(current_block, key, last_idx);
 		last_idx = next_idx(last_idx, key);
 
 		previous_block = current_block;
@@ -21,17 +19,15 @@ pub fn encrypt(message: &[u8], key: &[u8]) -> Vec<u8> {
 	}).collect()
 }
 
-pub fn decrypt(cipher: &[u8], key: &[u8]) -> Vec<u8> {
+pub fn decrypt(ciphertext: &[u8], key: &[u8], cipher: &Fn(u8, &[u8], usize) -> u8) -> Vec<u8> {
 
 	let mut previous_block: u8 = 0;
 	let mut last_idx = 0;
 
-	cipher.iter().map(|&x| {
+	ciphertext.iter().map(|&x| {
 
 		let mut current_block = x;
-
-		//DO DECRYPT
-		current_block = current_block ^ key[last_idx];
+		current_block = cipher(current_block, key, last_idx);
 		last_idx = next_idx(last_idx, key);
 
 		current_block = current_block ^ previous_block;
