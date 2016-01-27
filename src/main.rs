@@ -15,7 +15,9 @@ fn main() {
 	let key = &args[2];
 	let text = &args[3];
 
-	println!("{}", String::from_utf8(stream::decrypt(&stream::encrypt("hello".as_bytes(), &[234,062,323]), &[234,062,323])).unwrap());
+	let key = keys::create(16);
+
+	println!("{}", String::from_utf8(stream::decrypt(&stream::encrypt("hello".as_bytes(), &key), &key)).unwrap());
 
 	if command == "encrypt" {
 
