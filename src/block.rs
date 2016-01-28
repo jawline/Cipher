@@ -52,3 +52,7 @@ pub fn blocks_from_bytes(bytes: &[u8], block_size: usize) -> Vec<Block> {
 
 	blocks
 }
+
+pub fn blocks_into_bytes(blocks: Vec<Block>) -> Vec<u8> {
+	Vec::new()
+}
