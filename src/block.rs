@@ -9,15 +9,19 @@ struct Block {
 }
 
 impl Block {
+
 	pub fn new(size: usize) -> Block {
 		Block {
 			bytes: Vec::new(),
 			size: size
 		}
 	}
-	
-	fn set(&mut self, bytes: &[u8]) {
-		self.bytes = bytes.iter().map(|&x| x).collect();
+
+	fn from(size: usize, bytes: &[u8]) -> Block {
+		Block {
+			size: size,
+			bytes: bytes.iter().map(|&x| x).collect()
+		}
 	}
 }
 
@@ -28,14 +32,7 @@ impl BitXor for Block {
 		if rhs.size != self.size {
 			self
 		} else {
-			let mut newBytes = Vec::new();
-			for i in 0..self.bytes.len() {
-				newBytes.push(self.bytes[i] ^ rhs.bytes[i]);
-			}
-
-			let mut result = Block::new(self.size);
-			result.set(&newBytes);
-			result
+			Block::from(self.size, &self.bytes.iter().zip(rhs.bytes.iter()).map(|(lhs, rhs)| lhs ^ rhs).collect::<Vec<u8>>())
 		}
 	}
 }
