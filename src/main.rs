@@ -4,10 +4,18 @@ extern crate rustc_serialize;
 mod stream;
 mod keys;
 mod fiestal;
+mod block;
 
 use rustc_serialize::base64::{STANDARD, FromBase64, ToBase64};
 use std::env;
 use stream::*;
+
+fn get_mode<'a>(mode_str: &str) -> Option<fn(u8, &[u8], usize) -> u8> {
+	match mode_str {
+		"fiestal" => Some(fiestal::fiestal),
+		_ => None
+	}
+}
 
 fn main() {
 	let args: Vec<_> = env::args().collect();
@@ -20,12 +28,14 @@ fn main() {
 		"encrypt" => {
 			let key_text = &args[2].from_base64().unwrap();
 			let text = &args[3];
-			println!("{}", &stream::encrypt("hello".as_bytes(), &key_text, &fiestal::fiestal).to_base64(STANDARD));
+			let mode = &args[4];
+			println!("{}", &stream::encrypt("hello".as_bytes(), &key_text, &get_mode(mode).unwrap()).to_base64(STANDARD));
 		},
 		"decrypt" => {
 			let key_text = &args[2].from_base64().unwrap();
 			let text = &args[3].from_base64().unwrap();
-			println!("{}", String::from_utf8(stream::decrypt(&text, &key_text, &fiestal::fiestal)).unwrap());
+			let mode = &args[4];
+			println!("{}", String::from_utf8(stream::decrypt(&text, &key_text, &get_mode(mode).unwrap())).unwrap());
 		},
 		"make_key" => {
 			println!("{}", &keys::create(16).to_base64(STANDARD))
