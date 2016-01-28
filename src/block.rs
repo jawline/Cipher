@@ -49,6 +49,7 @@ pub fn blocks_from_bytes(bytes: &[u8], block_size: usize) -> Vec<Block> {
 	let mut current_byte = 0;
 	let mut bytes_from_last_block = 0;
 	let mut blocks = Vec::new();
+	let num_blocks = (bytes.len() * 8) / block_size;
 
 	blocks
 }
