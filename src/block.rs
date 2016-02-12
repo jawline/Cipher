@@ -1,7 +1,7 @@
 /**
  * Block will be able to store arbitrary blocks of bits
  */
- use std::ops::BitXor;
+use std::ops::BitXor;
 
 pub struct Block {
 	bytes: Vec<u8>,
